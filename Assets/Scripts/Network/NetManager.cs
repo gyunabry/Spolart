@@ -21,7 +21,15 @@ public partial class NetManager : MonoBehaviour
     [SerializeField]
     private TMP_Text joinCodeText;
 
+    [SerializeField]
+    private GameObject playerPrefab;
+
     private int maxPlayers = 4;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+    }
 
     private async void Start()
     {
@@ -33,9 +41,16 @@ public partial class NetManager : MonoBehaviour
             await AuthenticationService.Instance.SignInAnonymouslyAsync();
         }
 
-        m_StartHostButton.onClick.AddListener(() => CreateNewLobby());
+        m_StartHostButton.onClick.AddListener(() => CreateLobby());
         m_StartClientButton.onClick.AddListener(() => StartClient());
 
         m_StartJoinCode.onClick.AddListener(() => JoinGameWithCode(inputJoinCode.text));
+
+        // NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+    }
+
+    private void OnDestroy()
+    {
+        // NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientConnected;
     }
 }
